@@ -1,4 +1,4 @@
-Docker python disocord bot
+Docker python discord bot
 
 start app:
 docker-compose up
