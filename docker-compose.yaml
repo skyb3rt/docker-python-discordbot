@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  python-discord-bot:
+    container_name: python-discord-bot
+    build:
+      context: ./docker/python
+      dockerfile: Dockerfile
