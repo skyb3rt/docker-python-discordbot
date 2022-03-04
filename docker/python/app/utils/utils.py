@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 import requests
 logging.basicConfig(level=logging.INFO)
- 
+
 def lunch() -> str:
     '''return comic'''
     date = datetime.now()
