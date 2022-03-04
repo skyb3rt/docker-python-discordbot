@@ -20,4 +20,4 @@ jobs:
         pip install pylint Flask discord discord.py requests
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pylint --disable=missing-module-docstring $(git ls-files '*.py')
