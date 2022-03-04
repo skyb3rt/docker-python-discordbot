@@ -6,3 +6,9 @@ services:
     build:
       context: ./docker/python
       dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DISCORD_GUILD=${DISCORD_GUILD}
+      - CRYPTO_API=${CRYPTO_API}
