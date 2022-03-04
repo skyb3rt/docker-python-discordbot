@@ -36,7 +36,7 @@ class DiscordClient(discord.Client):
             case ["!lunch"]:
                 await message.channel.send(utils.lunch())
             case ["!crypto"]:
-                await message.channel.send(utils.get_crypto())
+                await message.channel.send(utils.get_crypto(CRYPTO_API))
             case ["!qr", *args]:
                 if len(args) > 0:
                     await message.channel.send(utils.qr_code(('+').join(args)))
