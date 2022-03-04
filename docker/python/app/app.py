@@ -14,7 +14,8 @@ CRYPTO_API = getenv('CRYPTO_API')
 client = discord.Client()
 
 
-def lunch():
+def lunch()->str:
+    '''return comic'''
     date = datetime.now()
     if date.isoweekday() > 5:
         date -= timedelta(days=7-date.isoweekday())
@@ -22,25 +23,22 @@ def lunch():
     return 'https://api.e24.no/content/v1/comics/' + dateformated
 
 
-def qr_code(tekst):
+def qrCode(tekst:str)->str:
+    '''return url for QR code'''
     return f"https://image-charts.com/chart?chs=150x150&cht=qr&chl={tekst}&choe=UTF-8"
 
-
-def stackoverflow(query):
-    url = f"https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=activity&q={query}&site=stackoverflow"
-    response = requests.get(url)
-    return (response.json()['items'][0]['link'])
-
-
-def chuck():
+def chuck()->str:
+    '''return Chuck Norris joke'''
     return requests.get('https://api.chucknorris.io/jokes/random').json()['value']
 
 
-def trump():
+def trump()->str:
+    '''return Trump quotes'''
     return requests.get('https://tronalddump.io/random/quote').json()['value']
 
 
-def get_crypto(type='all'):
+def getCrypto(type:str='all')->str:
+    '''return crypto prices '''
     cryptos = ["BTC", "LTC", "ETC", "BCH", "XLM",
                "NEO", "ETH", "XRP", "DASH", "STORJ"]
     url = f"https://min-api.cryptocompare.com/data/pricemulti?fsyms={','.join(cryptos)}&tsyms=USD&api_key={CRYPTO_API}"
