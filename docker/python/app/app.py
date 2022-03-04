@@ -1,11 +1,8 @@
 import logging
 from os import getenv
-from random import random
-from urllib.request import urlopen
 from datetime import datetime, timedelta
 import discord
 import requests
-from flask import json
 
 
 logging.basicConfig(level=logging.INFO)
@@ -24,7 +21,7 @@ def lunch() -> str:
     return 'https://api.e24.no/content/v1/comics/' + dateformated
 
 
-def qrCode(tekst: str) -> str:
+def qr_code(tekst: str) -> str:
     '''return url for QR code'''
     return f"https://image-charts.com/chart?chs=150x150&cht=qr&chl={tekst}&choe=UTF-8"
 
@@ -39,32 +36,35 @@ def trump() -> str:
     return requests.get('https://tronalddump.io/random/quote').json()['value']
 
 
-def getCrypto() -> str:
+def get_crypto() -> str:
     '''return crypto prices '''
     cryptos = ["BTC", "LTC", "ETC", "BCH", "XLM",
                "NEO", "ETH", "XRP", "DASH", "STORJ"]
-    url = f"https://min-api.cryptocompare.com/data/pricemulti?fsyms={','.join(cryptos)}&tsyms=USD&api_key={CRYPTO_API}"
+    baseurl = "https://min-api.cryptocompare.com/data/pricemulti"
+    url = f"{baseurl}?fsyms={','.join(cryptos)}&tsyms=USD&api_key={CRYPTO_API}"
     response = requests.get(url).json()
-    r = ''
-    for crypto in cryptos:
-        r += f"{crypto}: {response[crypto]['USD']} \t"
-    return r
+    logging.debug(response)
+    return ('\t').join([x+" : "+str(y['USD']) for x, y in response.items()])
 
 
-class discord_client(discord.Client):
+class DiscordClient(discord.Client):
+    '''Discord client'''
+    KOMMANDOER = "!lunch , !google , !trump , !chuck , !crypto , !qr"
 
-    async def on_ready(self):
-        logging.info(f"Logged on as {self.user} in {self.guilds[0].name}")
+    async def on_ready(self) -> None:
+        '''Discord client connected'''
+        logging.info("Logged on as %s in %s", self.user, self.guilds[0].name)
 
-    async def on_message(self, message):
-        logging.debug(
-            f"{client.user} : {message.content} in {message.channel}")
+    async def on_message(self, message) -> None:
+        '''message handler '''
+        logging.debug("%s : %s in %s", client.user,
+                      message.content, message.channel)
         if message.author == client.user:
             pass
 
         match message.content.lower().split():
             case ["!help"]:
-                await message.channel.send("Mulige kommandoer: !lunch , !google , !trump , !chuck , !crypto , !qr")
+                await message.channel.send(f"Mulige kommandoer: {self.KOMMANDOER} ")
             case ["ping"]:
                 await message.channel.send("pong")
             case ["!chuck"]:
@@ -74,20 +74,20 @@ class discord_client(discord.Client):
             case ["!lunch"]:
                 await message.channel.send(lunch())
             case ["!crypto"]:
-                await message.channel.send(getCrypto())
+                await message.channel.send(get_crypto())
             case ["!qr", *args]:
                 if len(args) > 0:
-                    await message.channel.send(qrCode(('+').join(args)))
+                    await message.channel.send(qr_code(('+').join(args)))
                 else:
-                    await message.channel.send('Hva vil du lage QR code for? Riktig bruk er : !QR TEKST')
+                    await message.channel.send('Riktig bruk er : !QR TEKST')
             case ["!google", *args]:
                 if len(args) > 0:
                     await message.channel.send(f"https://google.com/search?q={('+').join(args)}")
                 else:
-                    await message.channel.send('Hva vil du søke på? Riktig bruk er : !google SØKEORD')
+                    await message.channel.send('Riktig bruk er : !google SØKEORD')
             case _:
                 logging.debug(message)
 
 
-client = discord_client()
+client = DiscordClient()
 client.run(TOKEN)
